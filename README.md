@@ -1,5 +1,5 @@
 1. Super Market: to-do list
 2. NitrogenCalculator: Υπολογιζει τη λιπανση Αζωτου για ξερικές ελιές
 3. MeteoData.ipynb: Αναλυση δεδομένων απο τον Μετεωρολογικό σταθμό Θεολόγου, Φθιώτιδας - Ιδιοκτησία: Γιώργος Λεβογιάννης
-4. ChronosSimpleExample.ipynb: πρόβλεψη τιμών ελαιολάδου.
+4. ChronosSimpleExample.ipynb: Πρόβλεψη τιμών ελαιολάδου.
 5. SupllyChain: Αναλυση- Πρόβλεψη διαλείπουσας χρονοσειράς
