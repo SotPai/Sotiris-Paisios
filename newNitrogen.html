@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Υπολογισμός Αζώτου</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #475569;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --light: #f8fafc;
+      --dark: #0f172a;
+      --gray: #94a3b8;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --body-bg: #f1f5f9;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 0 30px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .calculator-container {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .input-pane, .output-pane {
+      flex: 1;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .pane-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .input-pane .pane-header {
+      background: linear-gradient(90deg, var(--primary), #3b82f6);
+      color: white;
+    }
+
+    .output-pane .pane-header {
+      background: linear-gradient(90deg, #10b981, #34d399);
+      color: white;
+    }
+
+    .pane-header i {
+      font-size: 1.8rem;
+    }
+
+    .pane-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .pane-body {
+      padding: 25px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--secondary);
+      font-size: 0.95rem;
+    }
+
+    .field-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .field-info i {
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    input[type="number"], 
+    input[readonly] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    input[readonly] {
+      background-color: #f8fafc;
+      color: var(--secondary);
+    }
+
+    .radios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      background: white;
+    }
+
+    .radio-group:hover {
+      border-color: var(--primary);
+    }
+
+    .radio-group input {
+      margin: 0;
+    }
+
+    .radio-group.active {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #f1f5f9;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .result-card {
+      background: #f0fdf4;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: 1px solid #d1fae5;
+    }
+
+    .result-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .result-card h3 {
+      font-size: 1rem;
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .result-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .result-unit {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-left: 5px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .instructions {
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .instructions h3 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .instructions ul {
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 1100px) {
+      .calculator-container {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .pane-body {
+        padding: 20px 15px;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-calculator"></i>Nitrogen Calculator</h1>
+      <p>Υπολογισμός αναγκών αζώτου ξηρικής καλλιέργειας ελιάς</p>
+    </header>
+
+    <div class="instructions">
+      <h3><i class="fas fa-info-circle"></i> Οδηγίες</h3>
+      <ul>
+        <li>Εισαγωγή όλων των παραμέτρων στο αριστερό τμήμα</li>
+        <li>Τα αποτελέσματα εμφανίζονται αυτόματα στο δεξιό τμήμα</li>
+        <li>Στην ποσότητα του λιπάσματος δεν περιλαμβάνονται τυχόν απώλειες</li>
+        <li>Με το "Generate Report" δημιουργήτε και κατεβαίνει το αντίστοιχο report</li>
+        <li>Με το "Reset All" καθαρίζονται όλα τα πεδία</li>
+      </ul>
+    </div>
+
+    <div class="calculator-container">
+      <!-- Input Pane -->
+      <div class="input-pane">
+        <div class="pane-header">
+          <i class="fas fa-sliders-h"></i>
+          <h2>Παράμετροι</h2>
+        </div>
+        <div class="pane-body">
+          <form id="calcForm" onsubmit="return false;">
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-ruler-vertical"></i>
+                <label for="diameter">Διάμετρος ελιάς (cm) -> 130 πόντους απόσταση από το έδαφος</label>
+              </div>
+              <div class="input-group">
+                <input id="diameter" name="diameter" type="number" step="any" min="0" placeholder="Enter diameter" />
+              </div>
+            </div>
+            
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-tint"></i>
+                <label>Παράγοντας Stress νερού</label>
+              </div>
+              <div class="radios">
+                <label class="radio-group">
+                  <input type="radio" name="stress" value="0.3" />
+                  <span>0.3 (Χαμηλό)</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="stress" value="0.4" />
+                  <span>0.4 (Μέτριο)</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="stress" value="0.5" />
+                  <span>0.5 (Ξηρασία)</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="stress" value="0.6" />
+                  <span>0.6 (Πολύ ξηρασία)</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-chart-line"></i>
+                <label>Εκτιμόμενη παραγωγή</label>
+              </div>
+              <div class="radios">
+                <label class="radio-group">
+                  <input type="radio" name="yield_status" value="0" />
+                  <span>0 (Μειωμένη)</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="yield_status" value="1" />
+                  <span>1 (Κανονική)</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="yield_status" value="2" />
+                  <span>2 (Μεγάλη)</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-weight"></i>
+                <label for="yield">Παραγωγή / Δένδρο(kg)</label>
+              </div>
+              <div class="input-group">
+                <input id="yield" name="yield" type="number" step="any" min="0" placeholder="Enter yield" />
+              </div>
+            </div>
+            
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-mountain"></i>
+                <label>Τύπος εδάφους</label>
+              </div>
+              <div class="radios">
+                <label class="radio-group">
+                  <input type="radio" name="soil_type" value="Sandy" />
+                  <span>Αμμουδερό</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="soil_type" value="Heavy" />
+                  <span>Βαρύ</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-leaf"></i>
+                <label>Ανάλυση φύλλων Ν < 1.8%?</label>
+              </div>
+              <div class="radios">
+                <label class="radio-group">
+                  <input type="radio" name="leaf_analysis" value="Yes" />
+                  <span>Yes</span>
+                </label>
+                <label class="radio-group">
+                  <input type="radio" name="leaf_analysis" value="No" />
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="field">
+              <div class="field-info">
+                <i class="fas fa-flask"></i>
+                <label for="fertilizer">Τύπος λιπάσματος (%)</label>
+              </div>
+              <div class="input-group">
+                <input id="fertilizer" name="fertilizer" type="number" step="any" min="0" max="100" placeholder="Enter percentage" />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-secondary" id="resetBtn">
+                <i class="fas fa-redo"></i> Reset All
+              </button>
+              <button type="button" class="btn btn-primary" id="reportBtn">
+                <i class="fas fa-file-download"></i> Generate Report
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Output Pane -->
+      <div class="output-pane">
+        <div class="pane-header">
+          <i class="fas fa-chart-bar"></i>
+          <h2>Υπολογισμοί</h2>
+        </div>
+        <div class="pane-body">
+          <div class="results-grid">
+            <div class="result-card">
+              <h3>Tree Cross-Sectional Area (TCSA)</h3>
+              <div class="result-value" id="result-tcsa">0.00</div>
+              <div class="result-unit">cm²</div>
+            </div>
+            <div class="result-card">
+              <h3>Βασικό άζωτο</h3>
+              <div class="result-value" id="result-baseline">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+            <div class="result-card">
+              <h3>Ετήσιες ανάγκες</h3>
+              <div class="result-value" id="result-year-adj">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+            <div class="result-card">
+              <h3>Αζωτο παραγωγής</h3>
+              <div class="result-value" id="result-yield-n">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+            <div class="result-card">
+              <h3>Αζωτο φυλλοδιαγνωστικής</h3>
+              <div class="result-value" id="result-leaf-n">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+            <div class="result-card">
+              <h3>Αζωτο εδάφους</h3>
+              <div class="result-value" id="result-soil-n">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+            <div class="result-card">
+              <h3>Ολικές ανάγκες</h3>
+              <div class="result-value" id="result-total">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+            <div class="result-card">
+              <h3>Ποσότητα λιπάσματος</h3>
+              <div class="result-value" id="result-fert">0.00</div>
+              <div class="result-unit">γρ.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Έρευνα & δημιουργία : Σωτήρης Γ. Παϊσιος - 2025</p>
+      <p>Επαγγελματικός οδηγός υπολογισμού Αζωτου | Οδηγός λίπανσης ξηρικού ελαιώνα</p>
+      <p>Όλοι οι υπολογισμοί γίνονται σε πραγματικό χρόνο</p>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      // DOM Elements
+      const els = {
+        diameter: document.getElementById('diameter'),
+        yield: document.getElementById('yield'),
+        fertilizer: document.getElementById('fertilizer'),
+        resultTcsa: document.getElementById('result-tcsa'),
+        resultBaseline: document.getElementById('result-baseline'),
+        resultYearAdj: document.getElementById('result-year-adj'),
+        resultYieldN: document.getElementById('result-yield-n'),
+        resultLeafN: document.getElementById('result-leaf-n'),
+        resultSoilN: document.getElementById('result-soil-n'),
+        resultTotal: document.getElementById('result-total'),
+        resultFert: document.getElementById('result-fert')
+      };
+      
+      const reportBtn = document.getElementById('reportBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      
+      // Utility functions
+      function parseNumber(v) {
+        const n = parseFloat(v);
+        return Number.isFinite(n) ? n : NaN;
+      }
+      
+      function fmt(n) {
+        return Number.isFinite(n) ? (Math.round(n*100)/100).toFixed(2) : '0.00';
+      }
+      
+      function getRadioValue(name) {
+        const r = document.querySelector('input[name="'+name+'"]:checked');
+        return r ? r.value : null;
+      }
+      
+      // Radio button styling
+      function updateRadioStyles() {
+        document.querySelectorAll('.radio-group').forEach(group => {
+          const input = group.querySelector('input');
+          if (input.checked) {
+            group.classList.add('active');
+          } else {
+            group.classList.remove('active');
+          }
+        });
+      }
+      
+      // Main calculation function
+      function computeAll() {
+        const diameter = parseNumber(els.diameter.value);
+        const tcsa = Number.isFinite(diameter) ? 0.7854 * Math.pow(diameter, 2) : NaN;
+        
+        const stress = parseNumber(getRadioValue('stress'));
+        const baseline = (Number.isFinite(tcsa) && Number.isFinite(stress)) ? tcsa * stress : NaN;
+        
+        const yieldStatus = getRadioValue('yield_status');
+        let year_adj = NaN;
+        if(Number.isFinite(baseline) && yieldStatus !== null) {
+          if(yieldStatus === '0') year_adj = baseline * 0.85;
+          else if(yieldStatus === '1') year_adj = baseline * 1.0;
+          else year_adj = baseline * 2.0;
+        }
+        
+        const yieldKg = parseNumber(els.yield.value);
+        const yield_n = Number.isFinite(yieldKg) ? yieldKg * 0.37 : 0;
+        
+        const soil_type = getRadioValue('soil_type');
+        const leaf_analysis = getRadioValue('leaf_analysis');
+        
+        let leaf_n = 0;
+        if(leaf_analysis === 'Yes' && Number.isFinite(year_adj)) {
+          leaf_n = (year_adj * 1.15) - year_adj;
+        }
+        
+        let soil_n = NaN;
+        if(Number.isFinite(year_adj) && soil_type !== null) {
+          if(soil_type === 'Sandy') soil_n = (year_adj * 1.25) - year_adj;
+          else if(soil_type === 'Heavy') soil_n = (year_adj * 1.0) - year_adj;
+        }
+        
+        let total_n = NaN;
+        if(Number.isFinite(year_adj) && Number.isFinite(soil_n) && Number.isFinite(yield_n) && Number.isFinite(leaf_n)) {
+          total_n = year_adj + soil_n + yield_n + leaf_n;
+        }
+        
+        const fertilizerPct = parseNumber(els.fertilizer.value);
+        let fert_n = NaN;
+        if(Number.isFinite(total_n) && Number.isFinite(fertilizerPct) && fertilizerPct > 0) {
+          fert_n = total_n / (fertilizerPct / 100);
+        }
+        
+        // Update result cards
+        els.resultTcsa.textContent = fmt(tcsa);
+        els.resultBaseline.textContent = fmt(baseline);
+        els.resultYearAdj.textContent = fmt(year_adj);
+        els.resultYieldN.textContent = fmt(yield_n);
+        els.resultLeafN.textContent = fmt(leaf_n);
+        els.resultSoilN.textContent = fmt(soil_n);
+        els.resultTotal.textContent = fmt(total_n);
+        els.resultFert.textContent = fmt(fert_n);
+        
+        return {
+          diameter, tcsa, stress, baseline, yieldStatus, year_adj, 
+          yieldKg, yield_n, soil_type, leaf_analysis, leaf_n, 
+          soil_n, total_n, fertilizerPct, fert_n
+        };
+      }
+      
+      // Event listeners
+      document.querySelectorAll('#calcForm input').forEach(inp => {
+        inp.addEventListener('input', () => {
+          computeAll();
+          updateRadioStyles();
+        });
+        inp.addEventListener('change', () => {
+          computeAll();
+          updateRadioStyles();
+        });
+      });
+      
+      document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', updateRadioStyles);
+      });
+      
+      resetBtn.addEventListener('click', () => {
+        document.querySelectorAll('#calcForm input').forEach(inp => {
+          if(inp.type === 'number') inp.value = '';
+          if(inp.type === 'radio') inp.checked = false;
+        });
+        computeAll();
+        updateRadioStyles();
+      });
+      
+      reportBtn.addEventListener('click', () => {
+        const v = computeAll();
+        const now = new Date();
+        const lines = [
+          'TCSA & Nitrogen Calculator Report',
+          'Generated: ' + now.toLocaleString(),
+          '========================================',
+          'INPUTS:',
+          `Tree Diameter (cm): ${fmt(v.diameter)}`,
+          `Water Stress Factor: ${fmt(v.stress)}`,
+          `Yield Status: ${v.yieldStatus || 'Not selected'}`,
+          `Fruit Yield (kg): ${fmt(v.yieldKg)}`,
+          `Soil Type: ${v.soil_type || 'Not selected'}`,
+          `Leaf Analysis <1.8% Nitrogen: ${v.leaf_analysis || 'Not selected'}`,
+          `Fertilizer Percentage: ${fmt(v.fertilizerPct)}%`,
+          '',
+          'CALCULATED VALUES:',
+          `Tree Cross-Sectional Area (TCSA): ${fmt(v.tcsa)} cm²`,
+          `Baseline Nitrogen: ${fmt(v.baseline)} kg`,
+          `Year Adjustment: ${fmt(v.year_adj)} kg`,
+          `Yield Nitrogen: ${fmt(v.yield_n)} kg`,
+          `Leaf Nitrogen: ${fmt(v.leaf_n)} kg`,
+          `Soil Nitrogen: ${fmt(v.soil_n)} kg`,
+          `Total Nitrogen Required: ${fmt(v.total_n)} kg`,
+          `Nitrogen Quantity: ${fmt(v.fert_n)} kg`,
+          '========================================'
+        ];
+        const blob = new Blob([lines.join('\n')], {type: 'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tcsa_nitrogen_report.txt';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+      
+      // Initialize
+      computeAll();
+      updateRadioStyles();
+    })();
+  </script>
+</body>
+</html>
